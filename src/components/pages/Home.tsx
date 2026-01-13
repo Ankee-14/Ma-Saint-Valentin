@@ -2,6 +2,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import './Home.css';
 
+import Coffe from '../assets/images/coffee_date.png';
+import Beach from '../assets/images/beach_sunset.png';
+import Birthday from '../assets/images/birthday_surprise.png';
+import Rain from '../assets/images/rain_dance.png';
+import Christmas from '../assets/images/christmas.png';
+import NewYears from '../assets/images/new_years.png';
+
 interface Particle {
   id: number;
   left: number;
@@ -42,7 +49,7 @@ const Home = () => {
       date: "March 15, 2024",
       caption: "That little café where we talked for hours... I knew right then you were special.",
       icon: "☕",
-      image: "../src/assets/images/coffee_date.png",
+      image: Coffe,
       className: "memory-photo-1"
     },
     {
@@ -51,7 +58,7 @@ const Home = () => {
       date: "June 8, 2024",
       caption: "Watching the sun dip into the ocean, your hand in mine. Pure magic.",
       icon: "🌅",
-      image: "../src/assets/images/beach_sunset.png",
+      image: Beach,
       className: "memory-photo-2"
     },
     {
@@ -60,7 +67,7 @@ const Home = () => {
       date: "August 22, 2024",
       caption: "The look on your face when you saw the balloons — I'll treasure it forever.",
       icon: "🎂",
-      image: "../src/assets/images/birthday_surprise.png",
+      image: Birthday,
       className: "memory-photo-3"
     },
     {
@@ -69,7 +76,7 @@ const Home = () => {
       date: "September 3, 2024",
       caption: "We got completely soaked, but your laughter made it the best day ever.",
       icon: "🌧️",
-      image: "../src/assets/images/rain_dance.png",
+      image: Rain,
       className: "memory-photo-4"
     },
     {
@@ -78,7 +85,7 @@ const Home = () => {
       date: "December 25, 2024",
       caption: "Hot cocoa, warm blankets, and your head on my shoulder. Perfect.",
       icon: "🎄",
-      image: "../src/assets/images/christmas.png",
+      image: Christmas,
       className: "memory-photo-5"
     },
     {
@@ -87,7 +94,7 @@ const Home = () => {
       date: "January 1, 2025",
       caption: "Starting a new year with you in my arms — my greatest blessing.",
       icon: "✨",
-      image: "../src/assets/images/new_years.png",
+      image: NewYears,
       className: "memory-photo-6"
     }
   ];
