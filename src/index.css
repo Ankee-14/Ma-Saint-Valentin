@@ -13,9 +13,9 @@
   --valentine-light-gold: #f5d98a;
 
   /* Typography */
-  --font-script: 'Great Vibes', cursive;
-  --font-elegant: 'Cormorant Garamond', serif;
-  --font-body: 'Cormorant Garamond', Georgia, serif;
+  --font-script: 'Pinyon Script', cursive;
+  --font-elegant: 'Playfair Display', serif;
+  --font-body: 'Montserrat', sans-serif;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -33,9 +33,10 @@ html,
 body,
 #root {
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 body {
@@ -43,7 +44,6 @@ body {
   line-height: 1.6;
   color: var(--valentine-cream);
   background: var(--valentine-black);
-  overflow-x: hidden;
 }
 
 a {

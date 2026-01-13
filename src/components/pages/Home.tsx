@@ -11,7 +11,17 @@ interface Particle {
   delay: number;
 }
 
-type PageState = 'initial' | 'letter' | 'memories';
+type PageState = 'initial' | 'letter' | 'memories' | 'proposal' | 'promise';
+
+interface Memory {
+  id: number;
+  title: string;
+  date: string;
+  caption: string;
+  icon: string;
+  image?: string;
+  className: string;
+}
 
 const Home = () => {
   const [currentPage, setCurrentPage] = useState<PageState>('initial');
@@ -20,8 +30,68 @@ const Home = () => {
   const [showSignature, setShowSignature] = useState(false);
   const [showNavButton, setShowNavButton] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [noButtonPosition, setNoButtonPosition] = useState({ x: 0, y: 0 });
+  const [titleText, setTitleText] = useState('My Dearest 💕');
+  const [explosions, setExplosions] = useState<{ id: number; x: number; y: number }[]>([]);
 
-  // Love letter content - sincere and emotional
+  // Memories data
+  const memories: Memory[] = [
+    {
+      id: 1,
+      title: "Our First Coffee Date",
+      date: "March 15, 2024",
+      caption: "That little café where we talked for hours... I knew right then you were special.",
+      icon: "☕",
+      image: "../src/assets/images/coffee_date.png",
+      className: "memory-photo-1"
+    },
+    {
+      id: 2,
+      title: "Sunset at the Beach",
+      date: "June 8, 2024",
+      caption: "Watching the sun dip into the ocean, your hand in mine. Pure magic.",
+      icon: "🌅",
+      image: "../src/assets/images/beach_sunset.png",
+      className: "memory-photo-2"
+    },
+    {
+      id: 3,
+      title: "Your Birthday Surprise",
+      date: "August 22, 2024",
+      caption: "The look on your face when you saw the balloons — I'll treasure it forever.",
+      icon: "🎂",
+      image: "../src/assets/images/birthday_surprise.png",
+      className: "memory-photo-3"
+    },
+    {
+      id: 4,
+      title: "Dancing in the Rain",
+      date: "September 3, 2024",
+      caption: "We got completely soaked, but your laughter made it the best day ever.",
+      icon: "🌧️",
+      image: "../src/assets/images/rain_dance.png",
+      className: "memory-photo-4"
+    },
+    {
+      id: 5,
+      title: "Our First Christmas",
+      date: "December 25, 2024",
+      caption: "Hot cocoa, warm blankets, and your head on my shoulder. Perfect.",
+      icon: "🎄",
+      image: "../src/assets/images/christmas.png",
+      className: "memory-photo-5"
+    },
+    {
+      id: 6,
+      title: "New Year's Kiss",
+      date: "January 1, 2025",
+      caption: "Starting a new year with you in my arms — my greatest blessing.",
+      icon: "✨",
+      image: "../src/assets/images/new_years.png",
+      className: "memory-photo-6"
+    }
+  ];
+
   const loveLetterContent = `To the one who holds my heart,
 
 From the very first moment our eyes met, I knew my life would never be the same. You walked into my world like a gentle breeze, and suddenly everything felt right.
@@ -109,10 +179,48 @@ You are my everything. Today, tomorrow, and always.`;
     }, 600);
   };
 
+  const handleNavigateToProposal = () => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentPage('proposal');
+      setIsTransitioning(false);
+    }, 600);
+  };
+
+  const handleYes = () => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentPage('promise');
+      setIsTransitioning(false);
+    }, 600);
+  };
+
+  const handleNoHover = () => {
+    const maxX = window.innerWidth / 3;
+    const maxY = window.innerHeight / 3;
+    const randomX = (Math.random() - 0.5) * maxX;
+    const randomY = (Math.random() - 0.5) * maxY;
+    setNoButtonPosition({ x: randomX, y: randomY });
+  };
+
+  const handleHeartClick = (e: React.MouseEvent) => {
+    const newExplosion = {
+      id: Date.now(),
+      x: e.clientX,
+      y: e.clientY,
+    };
+    setExplosions(prev => [...prev, newExplosion]);
+    setTimeout(() => {
+      setExplosions(prev => prev.filter(exp => exp.id !== newExplosion.id));
+    }, 1000);
+  };
+
   const getContainerClass = () => {
     let classes = 'valentines-container';
     if (currentPage === 'letter') classes += ' love-letter-mode';
     if (currentPage === 'memories') classes += ' memories-mode';
+    if (currentPage === 'proposal') classes += ' proposal-mode';
+    if (currentPage === 'promise') classes += ' promise-mode';
     if (isTransitioning) classes += ' transitioning';
     return classes;
   };
@@ -163,6 +271,7 @@ You are my everything. Today, tomorrow, and always.`;
             left: `${Math.random() * 100}vw`,
             animationDuration: `${10 + Math.random() * 6}s`,
           }}
+          onClick={handleHeartClick}
         >
           ♥
         </div>
@@ -172,7 +281,13 @@ You are my everything. Today, tomorrow, and always.`;
         {/* SCREEN 1: Initial Welcome */}
         {currentPage === 'initial' && (
           <div className="initial-screen">
-            <h1 className="title">My Dearest 💕</h1>
+            <h1
+              className="title"
+              onMouseEnter={() => setTitleText('My Everything ❤️')}
+              onMouseLeave={() => setTitleText('My Dearest 💕')}
+            >
+              {titleText}
+            </h1>
             <p className="subtitle">Something special is waiting for you...</p>
 
             <button className="magic-btn" onClick={handleSurprise}>
@@ -239,85 +354,87 @@ You are my everything. Today, tomorrow, and always.`;
 
             {/* Memories gallery with photos */}
             <div className="memories-gallery">
-              {/* Memory 1 - First Coffee Date */}
-              <div className="memory-card memory-photo-card">
-                <div className="memory-photo memory-photo-1">
-                  <div className="photo-overlay">☕</div>
+              {memories.map((memory) => (
+                <div key={memory.id} className="memory-card memory-photo-card">
+                  <div
+                    className={`memory-photo ${memory.className}`}
+                    style={memory.image ? { backgroundImage: `url(${memory.image})` } : {}}
+                  >
+                    {!memory.image && <div className="photo-overlay">{memory.icon}</div>}
+                  </div>
+                  <div className="memory-details">
+                    <h3 className="memory-title">{memory.title}</h3>
+                    <p className="memory-date">{memory.date}</p>
+                    <p className="memory-caption">{memory.caption}</p>
+                  </div>
                 </div>
-                <h3 className="memory-title">Our First Coffee Date</h3>
-                <p className="memory-date">March 15, 2024</p>
-                <p className="memory-caption">
-                  That little café where we talked for hours... I knew right then you were special.
-                </p>
-              </div>
-
-              {/* Memory 2 - Sunset at the Beach */}
-              <div className="memory-card memory-photo-card">
-                <div className="memory-photo memory-photo-2">
-                  <div className="photo-overlay">🌅</div>
-                </div>
-                <h3 className="memory-title">Sunset at the Beach</h3>
-                <p className="memory-date">June 8, 2024</p>
-                <p className="memory-caption">
-                  Watching the sun dip into the ocean, your hand in mine. Pure magic.
-                </p>
-              </div>
-
-              {/* Memory 3 - Birthday Surprise */}
-              <div className="memory-card memory-photo-card">
-                <div className="memory-photo memory-photo-3">
-                  <div className="photo-overlay">🎂</div>
-                </div>
-                <h3 className="memory-title">Your Birthday Surprise</h3>
-                <p className="memory-date">August 22, 2024</p>
-                <p className="memory-caption">
-                  The look on your face when you saw the balloons — I'll treasure it forever.
-                </p>
-              </div>
-
-              {/* Memory 4 - Dancing in the Rain */}
-              <div className="memory-card memory-photo-card">
-                <div className="memory-photo memory-photo-4">
-                  <div className="photo-overlay">🌧️</div>
-                </div>
-                <h3 className="memory-title">Dancing in the Rain</h3>
-                <p className="memory-date">September 3, 2024</p>
-                <p className="memory-caption">
-                  We got completely soaked, but your laughter made it the best day ever.
-                </p>
-              </div>
-
-              {/* Memory 5 - First Christmas */}
-              <div className="memory-card memory-photo-card">
-                <div className="memory-photo memory-photo-5">
-                  <div className="photo-overlay">🎄</div>
-                </div>
-                <h3 className="memory-title">Our First Christmas</h3>
-                <p className="memory-date">December 25, 2024</p>
-                <p className="memory-caption">
-                  Hot cocoa, warm blankets, and your head on my shoulder. Perfect.
-                </p>
-              </div>
-
-              {/* Memory 6 - New Year's Kiss */}
-              <div className="memory-card memory-photo-card">
-                <div className="memory-photo memory-photo-6">
-                  <div className="photo-overlay">✨</div>
-                </div>
-                <h3 className="memory-title">New Year's Kiss</h3>
-                <p className="memory-date">January 1, 2025</p>
-                <p className="memory-caption">
-                  Starting a new year with you in my arms — my greatest blessing.
-                </p>
-              </div>
+              ))}
             </div>
 
             <p className="memories-footer-text">
               Many more memories to come... 🌹
             </p>
+
+            <div className="memories-next-section">
+              <button className="memories-next-btn" onClick={handleNavigateToProposal}>
+                Next 💖
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* SCREEN 4: Proposal */}
+        {currentPage === 'proposal' && (
+          <div className={`proposal-screen ${isTransitioning ? 'fade-out' : ''}`}>
+            <div className="proposal-card">
+              <div className="proposal-heart">💖</div>
+              <h2 className="proposal-question">Will You Be My Valentine? 💕</h2>
+              <div className="proposal-actions">
+                <button className="yes-btn" onClick={handleYes}>YES 💖</button>
+                <button
+                  className="no-btn"
+                  onMouseEnter={handleNoHover}
+                  style={{ transform: `translate(${noButtonPosition.x}px, ${noButtonPosition.y}px)` }}
+                >
+                  NO 😅
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* SCREEN 5: Future Promise */}
+        {currentPage === 'promise' && (
+          <div className="promise-screen">
+            <div className="promise-content">
+              <div className="promise-glow"></div>
+              <h2 className="promise-title">My Promise to You 💍</h2>
+              <div className="promise-message">
+                <p>“With you, every tomorrow is my favorite promise 💖”</p>
+                <p>I promise to hold your hand through every adventure, to be your calm in every storm, and to love you more with every heartbeat.</p>
+                <p>You are my today, my tomorrow, and my forever.</p>
+              </div>
+              <div className="promise-footer">
+                <span className="heart-icon">💖</span>
+                <span className="heart-icon">✨</span>
+                <span className="heart-icon">💖</span>
+              </div>
+            </div>
           </div>
         )}
       </div>
+      {/* Particle explosions */}
+      {explosions.map(exp => (
+        <div
+          key={exp.id}
+          className="explosion-container"
+          style={{ left: exp.x, top: exp.y }}
+        >
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="mini-heart">❤️</div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
